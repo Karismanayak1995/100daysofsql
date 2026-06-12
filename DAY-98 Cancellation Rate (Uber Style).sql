@@ -23,7 +23,7 @@ Problem
 
 Formula:
 
-Cancellation Rate= Total Trips * 100 / Cancelled Trips
+Cancellation Rate= Cancelled Trips * 100 / Total Trips
 
 SELECT * FROM trips_04_06;
 
@@ -47,4 +47,16 @@ ROUND(
 FROM trips t
 LEFT JOIN cancel_trips c
 ON t.trip_date = c.trip_date
+ORDER BY trip_date;
+
+--OR---
+
+SELECT trip_date,
+ROUND(
+	SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) * 100.0 
+	/ COUNT(*) 
+	,2
+	) AS Cancellation_Rate
+FROM trips_04_06
+GROUP BY trip_date
 ORDER BY trip_date;
