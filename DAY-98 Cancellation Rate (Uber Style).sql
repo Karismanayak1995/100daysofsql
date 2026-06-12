@@ -26,3 +26,25 @@ Formula:
 Cancellation Rate= Total Trips * 100 / Cancelled Trips
 
 SELECT * FROM trips_04_06;
+
+WITH trips AS (
+	SELECT trip_date,
+	COUNT(*) AS Total_Trips
+	FROM trips_04_06
+	GROUP BY trip_date
+	),cancel_trips AS (
+		SELECT trip_date,
+		COUNT(*) Cancelled_Trips
+		FROM trips_04_06
+		WHERE status = 'cancelled'
+		GROUP BY trip_date
+	)
+SELECT t.trip_date,
+ROUND(
+	COALESCE(c.Cancelled_Trips,0) * 100.0 / t.Total_Trips
+	,2
+) AS Cancellation_Rate
+FROM trips t
+LEFT JOIN cancel_trips c
+ON t.trip_date = c.trip_date
+ORDER BY trip_date;
